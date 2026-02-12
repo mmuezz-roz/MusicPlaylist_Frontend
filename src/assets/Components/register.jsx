@@ -57,8 +57,8 @@ function RegisterUser() {
     }
 
     try {
-      const res = await api.post("/register", formData);
-      toast.success(res.data.message || "Welcome to MelodyHub! 🎵");
+      await api.post("/register", formData);
+      toast.success("Account created successfully");
       navigate("/login");
     } catch (err) {
       toast.error("Registration failed");
@@ -66,64 +66,63 @@ function RegisterUser() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 flex items-center justify-center px-6 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/10 blur-[120px] rounded-full" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-pink-600/10 blur-[120px] rounded-full" />
-
+    <div className="min-h-screen pt-24 pb-12 flex items-center justify-center px-6 bg-zinc-50">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-md"
       >
-        <div className="glass-card p-10 rounded-[2.5rem] border border-white/10 shadow-2xl">
+        <div className="minimal-card p-8 md:p-12 rounded-2xl bg-white shadow-sm">
           <div className="text-center mb-10">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-lg shadow-purple-500/20">
-              ✨
+            <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-white mx-auto mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25V13.5a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z" />
+              </svg>
             </div>
-            <h2 className="text-4xl font-bold mb-3 tracking-tight">
-              Create <span className="text-gradient">Account</span>
+            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+              Join MelodyHub
             </h2>
-            <p className="text-gray-400">Join MelodyHub and start creating playlists</p>
+            <p className="text-zinc-500 text-sm">Create an account to start your library</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1">Full Name</label>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 ml-1">Full Name</label>
               <input
                 type="text"
                 name="name"
                 placeholder="John Doe"
-                className={`input-field ${errors.name ? "!border-red-500/50" : ""}`}
+                className={`input-field ${errors.name ? "border-red-300 focus:border-red-400 focus:ring-red-50" : ""}`}
                 onChange={handleChange}
                 value={formData.name}
               />
               {errors.name && (
-                <p className="text-red-400 text-xs ml-1">{errors.name}</p>
+                <p className="text-red-500 text-xs ml-1">{errors.name}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1">Email Address</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 ml-1">Email Address</label>
               <input
                 type="email"
                 name="email"
                 placeholder="john@example.com"
-                className={`input-field ${errors.email ? "!border-red-500/50" : ""}`}
+                className={`input-field ${errors.email ? "border-red-300 focus:border-red-400 focus:ring-red-50" : ""}`}
                 onChange={handleChange}
                 value={formData.email}
               />
               {errors.email && (
-                <p className="text-red-400 text-xs ml-1">{errors.email}</p>
+                <p className="text-red-500 text-xs ml-1">{errors.email}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1">Password</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-zinc-700 ml-1">Password</label>
               <input
                 type="password"
                 name="password"
                 placeholder="••••••••"
-                className={`input-field ${errors.password ? "!border-red-500/50" : ""}`}
+                className={`input-field ${errors.password ? "border-red-300 focus:border-red-400 focus:ring-red-50" : ""}`}
                 onChange={handleChange}
                 value={formData.password}
               />
@@ -132,24 +131,22 @@ function RegisterUser() {
               )}
             </div>
 
-            <motion.button
-              whileHover={isFormValid ? { scale: 1.02 } : {}}
-              whileTap={isFormValid ? { scale: 0.98 } : {}}
+            <button
               type="submit"
               disabled={!isFormValid}
-              className={`w-full btn-primary h-14 text-lg mt-4 ${!isFormValid ? "opacity-50 grayscale cursor-not-allowed" : ""
+              className={`w-full btn-primary h-12 text-base mt-4 ${!isFormValid ? "opacity-50 grayscale cursor-not-allowed" : ""
                 }`}
             >
-              Sign Up 🚀
-            </motion.button>
+              Create Account
+            </button>
 
-            <div className="text-center mt-8">
+            <div className="text-center pt-4 border-t border-zinc-100 mt-6">
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="text-sm text-gray-400 hover:text-white transition-colors"
+                className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
               >
-                Already have an account? <span className="text-purple-400 font-bold ml-1">Sign in</span>
+                Already have an account? <span className="text-zinc-900 font-semibold underline underline-offset-4">Sign in</span>
               </button>
             </div>
           </form>
@@ -160,4 +157,3 @@ function RegisterUser() {
 }
 
 export default RegisterUser;
-

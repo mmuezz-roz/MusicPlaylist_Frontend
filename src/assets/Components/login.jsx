@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
 function Loginser() {
-
     const navigate = useNavigate()
     const [message, setMessage] = useState("")
     const [userData, setUserData] = useState({
@@ -23,45 +22,44 @@ function Loginser() {
         e.preventDefault()
         try {
             if (!userData.email || !userData.password) {
-                setMessage("All fields are required")
+                setMessage("Please enter all fields")
                 return;
             }
             const res = await api.post("/login", userData)
             localStorage.setItem("token", res.data.token)
             localStorage.setItem("user", JSON.stringify(res.data.user))
-            toast.success("Welcome back! 🎧")
+            toast.success("Welcome back")
             navigate("/Home")
 
         } catch (error) {
             console.log(error);
-            toast.error("Invalid credentials. Please try again.")
+            toast.error("Invalid email or password")
         }
     }
 
     return (
-        <div className="min-h-screen pt-20 flex items-center justify-center px-6 relative overflow-hidden">
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 blur-[120px] rounded-full" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-pink-600/20 blur-[120px] rounded-full" />
-
+        <div className="min-h-screen pt-20 flex items-center justify-center px-6 bg-zinc-50">
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md relative z-10"
+                className="w-full max-w-md"
             >
-                <div className="glass-card p-10 rounded-[2.5rem] border border-white/10 shadow-2xl">
+                <div className="minimal-card p-8 md:p-12 rounded-2xl bg-white shadow-sm">
                     <div className="text-center mb-10">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-lg shadow-purple-500/20">
-                            👋
+                        <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-white mx-auto mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clipRule="evenodd" />
+                            </svg>
                         </div>
-                        <h2 className="text-4xl font-bold mb-3 tracking-tight">
-                            Welcome <span className="text-gradient">Back</span>
+                        <h2 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+                            Welcome Back
                         </h2>
-                        <p className="text-gray-400">Login to manage your playlists</p>
+                        <p className="text-zinc-500 text-sm">Sign in to manage your music</p>
                     </div>
 
-                    <form onSubmit={HandleSubmit} className="space-y-6">
+                    <form onSubmit={HandleSubmit} className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-300 ml-1">Email Address</label>
+                            <label className="text-sm font-semibold text-zinc-700 ml-1">Email Address</label>
                             <input
                                 type="email"
                                 name="email"
@@ -73,9 +71,7 @@ function Loginser() {
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex justify-between items-center ml-1">
-                                <label className="text-sm font-semibold text-gray-300">Password</label>
-                            </div>
+                            <label className="text-sm font-semibold text-zinc-700 ml-1">Password</label>
                             <input
                                 type="password"
                                 name="password"
@@ -86,33 +82,27 @@ function Loginser() {
                             />
                         </div>
 
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                        <button
                             type="submit"
-                            className="w-full btn-primary h-14 text-lg mt-4"
+                            className="w-full btn-primary h-12 text-base mt-2"
                         >
-                            Sign In 🚀
-                        </motion.button>
+                            Sign In
+                        </button>
 
-                        <div className="text-center mt-8">
+                        <div className="text-center pt-4 border-t border-zinc-100 mt-6">
                             <button
                                 type="button"
                                 onClick={() => navigate("/register")}
-                                className="text-sm text-gray-400 hover:text-white transition-colors"
+                                className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
                             >
-                                New to MelodyHub? <span className="text-purple-400 font-bold ml-1">Create account</span>
+                                New here? <span className="text-zinc-900 font-semibold underline underline-offset-4">Create account</span>
                             </button>
                         </div>
 
                         {message && (
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="text-red-400 text-center text-sm font-medium bg-red-400/10 py-2 rounded-lg"
-                            >
+                            <p className="text-center text-red-500 text-sm font-medium py-2 rounded-lg bg-red-50">
                                 {message}
-                            </motion.p>
+                            </p>
                         )}
                     </form>
                 </div>

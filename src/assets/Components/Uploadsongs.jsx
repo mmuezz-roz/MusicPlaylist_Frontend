@@ -5,7 +5,6 @@ import api from "../../api/axios"
 import { motion } from "framer-motion"
 
 function UploadSongs() {
-
   const [SongData, setSongData] = useState({
     title: "",
     artist: "",
@@ -13,9 +12,7 @@ function UploadSongs() {
 
   const [file, SetFile] = useState(null)
   const [message, setMessage] = useState("")
-
   const navigate = useNavigate()
-
 
   const HandleChange = (e) => {
     setSongData({
@@ -52,12 +49,13 @@ function UploadSongs() {
         return;
       }
 
-      const res = await api.post("/addSong", form, {
+      await api.post("/addSong", form, {
         headers: {
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`
         }
       })
-      toast.success("Song uploaded successfully! 🎵");
+      toast.success("Song uploaded successfully!");
       navigate("/songs");
     } catch (error) {
       console.log(error);
@@ -66,29 +64,28 @@ function UploadSongs() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 flex items-center justify-center px-6 relative overflow-hidden">
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-purple-600/10 blur-[120px] rounded-full" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-pink-600/10 blur-[120px] rounded-full" />
-
+    <div className="min-h-screen pt-24 pb-12 flex items-center justify-center px-6 bg-zinc-50">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-xl relative z-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-xl"
       >
-        <div className="glass-card p-10 rounded-[2.5rem] border border-white/10 shadow-2xl">
+        <div className="minimal-card p-8 md:p-12 rounded-2xl bg-white">
           <div className="text-center mb-10">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-lg shadow-purple-500/20">
-              📤
+            <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-white mx-auto mb-6 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
             </div>
-            <h1 className="text-4xl font-bold mb-3 tracking-tight">
-              Upload <span className="text-gradient">Music</span>
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+              Upload Track
             </h1>
-            <p className="text-gray-400">Add your favorite tracks to the cloud library</p>
+            <p className="text-zinc-500 text-sm">Add new music to your library</p>
           </div>
 
           <form onSubmit={HandleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1">Song Title</label>
+              <label className="text-sm font-semibold text-zinc-700 ml-1">Song Title</label>
               <input
                 type="text"
                 name="title"
@@ -100,7 +97,7 @@ function UploadSongs() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1">Artist Name</label>
+              <label className="text-sm font-semibold text-zinc-700 ml-1">Artist Name</label>
               <input
                 type="text"
                 name="artist"
@@ -112,7 +109,7 @@ function UploadSongs() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 ml-1">Audio File</label>
+              <label className="text-sm font-semibold text-zinc-700 ml-1">Audio File</label>
               <div className="relative group">
                 <input
                   type="file"
@@ -123,12 +120,14 @@ function UploadSongs() {
                 />
                 <label
                   htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 bg-white/5 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:bg-white/10 hover:border-purple-500/50 transition-all group"
+                  className="flex flex-col items-center justify-center w-full h-32 bg-zinc-50 border-2 border-dashed border-zinc-200 rounded-xl cursor-pointer hover:bg-zinc-100 hover:border-zinc-300 transition-all"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <span className="text-3xl mb-2 group-hover:scale-110 transition-transform">🎧</span>
-                    <p className="text-sm text-gray-400">
-                      {file ? <span className="text-purple-400 font-semibold">{file.name}</span> : "Click to select or drag and drop"}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-zinc-400 mb-2 group-hover:text-zinc-500">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
+                    </svg>
+                    <p className="text-sm text-zinc-500 px-4 text-center">
+                      {file ? <span className="text-zinc-900 font-medium truncate max-w-xs block">{file.name}</span> : "Click to browse or drag your audio file here"}
                     </p>
                   </div>
                 </label>
@@ -136,23 +135,17 @@ function UploadSongs() {
             </div>
 
             {message && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-center text-red-400 text-sm font-medium bg-red-400/10 py-2 rounded-lg"
-              >
+              <p className="text-center text-red-500 text-sm font-medium py-2 rounded-lg bg-red-50">
                 {message}
-              </motion.p>
+              </p>
             )}
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               type="submit"
-              className="w-full btn-primary h-14 text-lg"
+              className="w-full btn-primary h-12 text-base shadow-sm"
             >
-              Start Upload 🚀
-            </motion.button>
+              Upload to Cloud
+            </button>
           </form>
         </div>
       </motion.div>
