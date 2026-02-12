@@ -5,13 +5,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #CFCFCF;
-  /* Updated Background */
+  --background: #f4f3f1;
+  /* Warm off-white background */
   --surface: #ffffff;
-  --surface-hover: #f3f4f6;
-  --text-main: #111827;
-  --text-muted: #6b7280;
-  --border: #b1b5bb;
+  --surface-hover: #f9f8f6;
+  --text-main: #1a1a1a;
+  --text-muted: #666360;
+  --border: #e5e2dd;
+  /* Harmonious warm border */
   --primary: #111827;
   --primary-text: #ffffff;
   --accent: #3b82f6;
