@@ -38,28 +38,28 @@ function Loginser() {
     }
 
     return (
-        <div className="min-h-screen pt-20 flex items-center justify-center px-6 bg-zinc-50">
+        <div className="min-h-screen pt-20 flex items-center justify-center px-6 bg-[var(--background)]">
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-md"
             >
-                <div className="minimal-card p-8 md:p-12 rounded-2xl bg-white shadow-sm">
+                <div className="minimal-card p-8 md:p-12 rounded-2xl bg-[var(--surface)] shadow-sm">
                     <div className="text-center mb-10">
-                        <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center text-white mx-auto mb-6">
+                        <div className="w-12 h-12 bg-[var(--primary)] rounded-xl flex items-center justify-center text-[var(--primary-text)] mx-auto mb-6">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                                 <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clipRule="evenodd" />
                             </svg>
                         </div>
-                        <h2 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+                        <h2 className="text-3xl font-bold tracking-tight text-[var(--text-main)] mb-2">
                             Welcome Back
                         </h2>
-                        <p className="text-zinc-500 text-sm">Sign in to manage your music</p>
+                        <p className="text-[var(--text-muted)] text-sm">Sign in to manage your music</p>
                     </div>
 
                     <form onSubmit={HandleSubmit} className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-zinc-700 ml-1">Email Address</label>
+                            <label className="text-sm font-semibold text-[var(--text-muted)] ml-1">Email Address</label>
                             <input
                                 type="email"
                                 name="email"
@@ -71,7 +71,7 @@ function Loginser() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-zinc-700 ml-1">Password</label>
+                            <label className="text-sm font-semibold text-[var(--text-muted)] ml-1">Password</label>
                             <input
                                 type="password"
                                 name="password"
@@ -89,18 +89,18 @@ function Loginser() {
                             Sign In
                         </button>
 
-                        <div className="text-center pt-4 border-t border-zinc-100 mt-6">
+                        <div className="text-center pt-4 border-t border-[var(--border)] mt-6">
                             <button
                                 type="button"
                                 onClick={() => navigate("/register")}
-                                className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+                                className="text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
                             >
-                                New here? <span className="text-zinc-900 font-semibold underline underline-offset-4">Create account</span>
+                                New here? <span className="text-[var(--text-main)] font-semibold underline underline-offset-4">Create account</span>
                             </button>
                         </div>
 
                         {message && (
-                            <p className="text-center text-red-500 text-sm font-medium py-2 rounded-lg bg-red-50">
+                            <p className="text-center text-red-500 text-sm font-medium py-2 rounded-lg bg-red-500/10">
                                 {message}
                             </p>
                         )}
