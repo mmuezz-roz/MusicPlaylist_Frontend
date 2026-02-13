@@ -69,16 +69,16 @@ function Songs() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-6 bg-[var(--background)]">
+    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
       <div className="container-custom">
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-[var(--text-main)] tracking-tight">Explore</h2>
-            <p className="text-[var(--text-muted)] mt-1 text-sm">Discover new sounds</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-main)] tracking-tight">Explore</h2>
+            <p className="text-[var(--text-muted)] mt-1 text-xs sm:text-sm">Discover new sounds</p>
           </div>
           <button
             onClick={() => navigate("/upload")}
-            className="btn-primary text-sm"
+            className="btn-primary text-xs sm:text-sm w-full sm:w-auto"
           >
             Upload Track
           </button>
@@ -86,42 +86,42 @@ function Songs() {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="w-8 h-8 border-2 border-[var(--border)] border-t-[var(--text-main)] rounded-full animate-spin"></div>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 border-2 border-[var(--border)] border-t-[var(--text-main)] rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
             {songs.map((song, index) => (
               <motion.div
                 key={song._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="minimal-card p-5 rounded-xl bg-[var(--surface)] group hover:shadow-md transition-shadow"
+                className="minimal-card p-4 sm:p-5 rounded-xl bg-[var(--surface)] group hover:shadow-md transition-shadow"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-10 h-10 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
                     </svg>
                   </div>
                   <button
                     onClick={() => openAddModal(song)}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors p-1"
+                    className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors p-1.5 sm:p-1"
                     title="Add to playlist"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                   </button>
                 </div>
 
-                <h3 className="font-semibold text-lg text-[var(--text-main)] truncate mb-1">{song.title}</h3>
-                <p className="text-[var(--text-muted)] text-sm truncate mb-4">{song.artist}</p>
+                <h3 className="font-semibold text-base sm:text-lg text-[var(--text-main)] truncate mb-1">{song.title}</h3>
+                <p className="text-[var(--text-muted)] text-xs sm:text-sm truncate mb-3 sm:mb-4">{song.artist}</p>
 
                 {song.filepath && (
                   <audio
                     controls
-                    className="w-full h-8 scale-[0.98] origin-left opacity-70 hover:opacity-100 transition-opacity invert dark:invert-0"
+                    className="w-full h-7 sm:h-8 scale-[0.98] origin-left opacity-70 hover:opacity-100 transition-opacity invert dark:invert-0"
                   >
                     <source src={song.filepath} type="audio/mp3" />
                   </audio>

@@ -84,7 +84,7 @@ function Playlist() {
   };
 
   return (
-    <div className="min-h-screen pt-24 pb-12 px-6 bg-[var(--background)]">
+    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -97,10 +97,10 @@ function Playlist() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="minimal-card p-6 rounded-xl w-full max-w-sm bg-[var(--surface)]"
+              className="minimal-card p-5 sm:p-6 rounded-xl w-full max-w-sm bg-[var(--surface)]"
             >
-              <h3 className="text-lg font-semibold mb-2 text-[var(--text-main)]">Delete Playlist?</h3>
-              <p className="text-sm text-[var(--text-muted)] mb-6">This action cannot be undone.</p>
+              <h3 className="text-base sm:text-lg font-semibold mb-2 text-[var(--text-main)]">Delete Playlist?</h3>
+              <p className="text-xs sm:text-sm text-[var(--text-muted)] mb-5 sm:mb-6">This action cannot be undone.</p>
 
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -108,14 +108,14 @@ function Playlist() {
                     DeletePlaylist(selectedPlaylistId);
                     setShowModal(false);
                   }}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition"
+                  className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-red-700 transition"
                 >
                   Delete
                 </button>
 
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-[var(--surface-hover)] text-[var(--text-main)] rounded-lg text-sm font-medium hover:opacity-80 transition"
+                  className="px-3 sm:px-4 py-2 bg-[var(--surface-hover)] text-[var(--text-main)] rounded-lg text-xs sm:text-sm font-medium hover:opacity-80 transition"
                 >
                   Cancel
                 </button>
@@ -126,31 +126,31 @@ function Playlist() {
       </AnimatePresence>
 
       <div className="container-custom">
-        <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 sm:mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-[var(--text-main)] tracking-tight">Library</h2>
-            <p className="text-[var(--text-muted)] text-sm mt-1">Manage your collections</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-main)] tracking-tight">Library</h2>
+            <p className="text-[var(--text-muted)] text-xs sm:text-sm mt-1">Manage your collections</p>
           </div>
         </div>
 
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 flex shadow-sm max-w-md">
+        <div className="bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-6 sm:mb-8 flex shadow-sm max-w-md">
           <input
             value={playlistName}
             onChange={(e) => setPlaylistName(e.target.value)}
-            className="flex-grow px-4 py-2 bg-transparent outline-none text-[var(--text-main)] placeholder-zinc-400 text-sm"
+            className="flex-grow px-3 sm:px-4 py-2 bg-transparent outline-none text-[var(--text-main)] placeholder-zinc-400 text-xs sm:text-sm"
             placeholder="New playlist name..."
           />
           <button
             onClick={handleCreatePlaylist}
-            className="bg-[var(--primary)] text-[var(--primary-text)] px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
+            className="bg-[var(--primary)] text-[var(--primary-text)] px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition"
           >
             Create
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
           {/* Playlists Sidebar */}
-          <div className="lg:col-span-4 space-y-3">
+          <div className="lg:col-span-4 space-y-2 sm:space-y-3">
             <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2 px-1">Playlists</h3>
             {playlists.length > 0 ? (
               playlists.map((pl) => (
@@ -158,14 +158,14 @@ function Playlist() {
                   key={pl._id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className={`p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center group ${selectedPlaylistId === pl._id
-                      ? "bg-[var(--surface-hover)] text-[var(--text-main)]"
-                      : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-main)]"
+                  className={`p-2.5 sm:p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center group ${selectedPlaylistId === pl._id
+                    ? "bg-[var(--surface-hover)] text-[var(--text-main)]"
+                    : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-main)]"
                     }`}
                   onClick={() => toggleSongs(pl._id)}
                 >
-                  <div className="flex items-center gap-3 overflow-hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 flex-shrink-0">
+                  <div className="flex items-center gap-2 sm:gap-3 overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                     </svg>
                     <span className="font-medium truncate text-sm">{pl.title}</span>
@@ -250,8 +250,8 @@ function Playlist() {
                           </div>
 
                           {song.filepath && (
-                            <div className="w-32 sm:w-48">
-                              <audio controls className="w-full h-8 scale-90 origin-right opacity-60 hover:opacity-100 transition-opacity invert dark:invert-0">
+                            <div className="w-28 sm:w-32 md:w-48">
+                              <audio controls className="w-full h-7 sm:h-8 scale-90 origin-right opacity-60 hover:opacity-100 transition-opacity invert dark:invert-0">
                                 <source src={song.filepath} type="audio/mp3" />
                               </audio>
                             </div>
