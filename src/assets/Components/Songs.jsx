@@ -69,7 +69,7 @@ function Songs() {
   };
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
+    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-28 md:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
       <div className="container-custom">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 sm:mb-10 gap-4">
           <div>
@@ -99,17 +99,21 @@ function Songs() {
                 className="minimal-card p-4 sm:p-5 rounded-xl bg-[var(--surface)] group hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
-                    </svg>
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden flex-shrink-0">
+                    {song.coverImage ? (
+                      <img src={song.coverImage} alt={song.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 sm:w-8 sm:h-8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
+                      </svg>
+                    )}
                   </div>
                   <button
                     onClick={() => openAddModal(song)}
                     className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors p-1.5 sm:p-1"
                     title="Add to playlist"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                   </button>

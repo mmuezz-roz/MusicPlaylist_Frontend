@@ -84,7 +84,7 @@ function Playlist() {
   };
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
+    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-28 md:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -240,8 +240,12 @@ function Playlist() {
                           transition={{ delay: index * 0.05 }}
                           className="group flex items-center gap-4 p-3 hover:bg-[var(--surface-hover)] rounded-lg transition-colors border border-transparent hover:border-[var(--border)]"
                         >
-                          <div className="w-8 h-8 flex items-center justify-center bg-[var(--surface-hover)] text-[var(--text-muted)] rounded text-xs font-mono">
-                            {index + 1}
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden flex-shrink-0 border border-[var(--border)]">
+                            {song.coverImage ? (
+                              <img src={song.coverImage} alt={song.title} className="w-full h-full object-cover" />
+                            ) : (
+                              <div className="text-xs font-mono">{index + 1}</div>
+                            )}
                           </div>
 
                           <div className="flex-grow min-w-0">

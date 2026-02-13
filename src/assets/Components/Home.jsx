@@ -20,7 +20,7 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-12 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative bg-[var(--background)]">
+    <div className="min-h-screen pt-24 sm:pt-28 md:pt-32 pb-28 md:pb-12 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative bg-[var(--background)]">
 
       <motion.div
         variants={containerVariants}
