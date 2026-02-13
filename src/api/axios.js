@@ -1,7 +1,10 @@
 import axios from 'axios'
 
 // const api = axios.create({ baseURL: "http://localhost:3000" })
-const api = axios.create({ baseURL: "https://melodyhub-backend.vercel.app" })
+const api = axios.create({
+    baseURL: "https://melodyhub-backend.vercel.app",
+    withCredentials: false // Disable for now to test if it fixes the preflight error
+})
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token")
