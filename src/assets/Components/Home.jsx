@@ -56,7 +56,17 @@ function Home() {
           variants={itemVariants}
           className="flex flex-wrap gap-4 justify-center"
         >
-          <button onClick={() => navigate("/login")} className="btn-primary">
+          <button
+            onClick={() => {
+              const token = localStorage.getItem("token");
+              if (token) {
+                navigate("/songs");
+              } else {
+                navigate("/login");
+              }
+            }}
+            className="btn-primary"
+          >
             Start Listening
           </button>
           <button onClick={() => navigate("/songs")} className="btn-secondary">
