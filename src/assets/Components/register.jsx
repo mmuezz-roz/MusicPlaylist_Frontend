@@ -57,9 +57,12 @@ function RegisterUser() {
     }
 
     try {
-      await api.post("/register", formData);
+      const res = await api.post("/register", formData);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.data));
       toast.success("Account created successfully");
-      navigate("/login");
+      navigate("/Home");
+      window.location.reload(); // Refresh to update Navbar state
     } catch (err) {
       toast.error("Registration failed");
     }
