@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 
 function Loginser() {
     const navigate = useNavigate()
+    const [message, setMessage] = useState("")
     const [showPassword, setShowPassword] = useState(false);
     const [userData, setUserData] = useState({
         email: "",
