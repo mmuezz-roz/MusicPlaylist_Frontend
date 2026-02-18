@@ -39,6 +39,13 @@ function UploadSongs() {
       return;
     }
 
+    const VERCEL_LIMIT = 4.5 * 1024 * 1024;
+    if (file.size > VERCEL_LIMIT) {
+      toast.error("File too large! Vercel limits uploads to 4.5MB. Please use a smaller file.");
+      setMessage("Vercel upload limit is 4.5MB.");
+      return;
+    }
+
     setIsUploading(true);
     const form = new FormData();
     form.append("title", SongData.title);
@@ -177,7 +184,7 @@ function UploadSongs() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
                       </svg>
                       <p className="text-xs sm:text-sm text-[var(--text-muted)] px-3 text-center">
-                        {file ? <span className="text-[var(--text-main)] font-medium truncate max-w-xs block">{file.name}</span> : "Upload Audio"}
+                        {file ? <span className="text-[var(--text-main)] font-medium truncate max-w-xs block">{file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)</span> : "Upload Audio"}
                       </p>
                     </div>
                   </label>
