@@ -59,7 +59,6 @@ function UploadSongs() {
 
       await api.post("/addSong", form, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`
         }
       })
