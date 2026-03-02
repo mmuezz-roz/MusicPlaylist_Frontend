@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../../api/axios";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -10,6 +10,13 @@ function Songs() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSong, setSelectedSong] = useState(null);
   const [playlists, setPlaylists] = useState([]);
+
+  // ── Single global audio instance ──────────────────────────────────────────
+  // One ref for the Audio object, one state for which song id is "active"
+  const audioRef = useRef(null);          // the single Audio instance
+  const [playingId, setPlayingId] = useState(null);   // song._id currently playing
+  const [isPlaying, setIsPlaying] = useState(false);  // play / pause toggle
+  // ──────────────────────────────────────────────────────────────────────────
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -44,6 +51,75 @@ function Songs() {
     fetchSongs();
     fetchPlaylists();
   }, []);
+
+  // Cleanup: pause and release audio when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  /**
+   * handlePlay — the single source of truth for playback.
+   *
+   * Cases:
+   *  1. Clicking the SAME song that is currently PLAYING  → pause it
+   *  2. Clicking the SAME song that is currently PAUSED   → resume it
+   *  3. Clicking a DIFFERENT song                         → stop current, start new
+   */
+  const handlePlay = (song) => {
+    if (!song.filepath) return;
+
+    // ── Case 1 & 2: same song ─────────────────────────────────────────────
+    if (playingId === song._id) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play().catch(console.error);
+        setIsPlaying(true);
+      }
+      return;
+    }
+
+    // ── Case 3: different song ────────────────────────────────────────────
+    // Stop whatever is currently playing
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";      // release the old resource
+    }
+
+    // Create a fresh Audio instance for the new song
+    const audio = new Audio(song.filepath);
+    audioRef.current = audio;
+
+    // When the track ends, reset UI state
+    audio.addEventListener("ended", () => {
+      setIsPlaying(false);
+      setPlayingId(null);
+    });
+
+    // Handle load/play errors gracefully
+    audio.addEventListener("error", () => {
+      toast.error("Failed to load audio. Try again.");
+      setIsPlaying(false);
+      setPlayingId(null);
+    });
+
+    audio.play().catch((err) => {
+      console.error("Playback error:", err);
+      toast.error("Playback failed.");
+      setIsPlaying(false);
+      setPlayingId(null);
+    });
+
+    setPlayingId(song._id);
+    setIsPlaying(true);
+  };
 
   const openAddModal = (song) => {
     if (!token) {
@@ -90,54 +166,101 @@ function Songs() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            {songs.map((song, index) => (
-              <motion.div
-                key={song._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="minimal-card p-4 sm:p-5 rounded-xl bg-[var(--surface)] group hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden flex-shrink-0">
-                    {song.coverImage ? (
-                      <img src={song.coverImage} alt={song.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 sm:w-8 sm:h-8">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
+            {songs.map((song, index) => {
+              const active = playingId === song._id;
+              const playing = active && isPlaying;
+
+              return (
+                <motion.div
+                  key={song._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="minimal-card p-4 sm:p-5 rounded-xl bg-[var(--surface)] group hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    {/* Album art / play button */}
+                    <button
+                      onClick={() => handlePlay(song)}
+                      disabled={!song.filepath}
+                      className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all overflow-hidden flex-shrink-0 relative group/play focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+                      title={playing ? "Pause" : "Play"}
+                    >
+                      {/* Cover image dimmed when playing */}
+                      {song.coverImage && (
+                        <img
+                          src={song.coverImage}
+                          alt={song.title}
+                          className={`w-full h-full object-cover absolute inset-0 transition-opacity ${playing ? "opacity-40" : "opacity-100"}`}
+                        />
+                      )}
+
+                      {/* Play / Pause / Music note icon */}
+                      <span className={`relative z-10 transition-opacity ${song.coverImage ? (playing || "group-hover/play:opacity-100 opacity-0") : "opacity-100"}`}>
+                        {playing ? (
+                          // Pause icon
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--text-main)]">
+                            <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0A.75.75 0 0115 4.5h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
+                          </svg>
+                        ) : active ? (
+                          // Play icon (paused state of active song)
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--text-main)]">
+                            <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          // Music note (default, no cover)
+                          !song.coverImage && (
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 sm:w-8 sm:h-8">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
+                            </svg>
+                          )
+                        )}
+                      </span>
+
+                      {/* Animated equalizer bars when playing */}
+                      {playing && (
+                        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-[2px] items-end z-20">
+                          {[1, 2, 3].map((i) => (
+                            <span
+                              key={i}
+                              className="w-[3px] bg-[var(--primary)] rounded-full"
+                              style={{
+                                height: `${6 + i * 3}px`,
+                                animation: `eq-bar ${0.5 + i * 0.1}s ease-in-out infinite alternate`,
+                              }}
+                            />
+                          ))}
+                        </span>
+                      )}
+                    </button>
+
+                    {/* Add to playlist button */}
+                    <button
+                      onClick={() => openAddModal(song)}
+                      className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors p-1.5 sm:p-1"
+                      title="Add to playlist"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                       </svg>
-                    )}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => openAddModal(song)}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors p-1.5 sm:p-1"
-                    title="Add to playlist"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                  </button>
-                </div>
 
-                <h3 className="font-semibold text-base sm:text-lg text-[var(--text-main)] truncate mb-1">{song.title}</h3>
-                <p className="text-[var(--text-muted)] text-xs sm:text-sm truncate mb-3 sm:mb-4">{song.artist}</p>
-
-                {song.filepath && (
-                  <audio
-                    controls
-                    className="w-full h-7 sm:h-8 scale-[0.98] origin-left opacity-70 hover:opacity-100 transition-opacity invert dark:invert-0"
-                  >
-                    <source src={song.filepath} type="audio/mp3" />
-                  </audio>
-                )}
-              </motion.div>
-            ))}
+                  <h3 className="font-semibold text-base sm:text-lg text-[var(--text-main)] truncate mb-1">{song.title}</h3>
+                  <p className={`text-xs sm:text-sm truncate ${active ? "text-[var(--primary)]" : "text-[var(--text-muted)]"}`}>
+                    {song.artist}
+                    {playing && <span className="ml-1 text-xs">▶ Playing</span>}
+                    {active && !playing && <span className="ml-1 text-xs opacity-60">⏸ Paused</span>}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         )}
 
         {!loading && songs.length === 0 && (
           <div className="text-center py-20 bg-[var(--surface)] border border-dashed border-[var(--border)] rounded-2xl">
-            <p className="text-[var(--text-muted)]">No songs found. Start by uploading one!</p>
+            <p className="text-[var(--text-muted)]">No songs found, Start by uploading one!</p>
           </div>
         )}
 
@@ -200,6 +323,14 @@ function Songs() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Equalizer bar animation keyframes */}
+      <style>{`
+        @keyframes eq-bar {
+          from { transform: scaleY(0.4); }
+          to   { transform: scaleY(1.2); }
+        }
+      `}</style>
     </div>
   );
 }
