@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import api from "../../api/axios";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useAudio } from "../Context/AudioContext";
 
 function Songs() {
   const [songs, setSongs] = useState([]);
@@ -12,25 +13,10 @@ function Songs() {
   const [playlists, setPlaylists] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ── Global Audio Management ───────────────────────────────────────────────
-  const audioRef = useRef(null);
-  const [playingId, setPlayingId] = useState(null);   // The active song ID
-  const [isPlaying, setIsPlaying] = useState(false);  // Playing vs Paused
-  const [isBuffering, setIsBuffering] = useState(false); // True while loading track
-  // ──────────────────────────────────────────────────────────────────────────
+  const { currentSong, isPlaying, isBuffering, playSong } = useAudio();
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-
-  // Helper to remove listeners from existing audio instance
-  const cleanupAudioListeners = (audio) => {
-    if (!audio) return;
-    audio.onended = null;
-    audio.onerror = null;
-    audio.oncanplay = null;
-    audio.onwaiting = null;
-    audio.onplaying = null;
-  };
 
   const fetchSongs = async () => {
     try {
@@ -62,19 +48,6 @@ function Songs() {
     fetchPlaylists();
   }, []);
 
-  // Final cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        cleanupAudioListeners(audioRef.current);
-        audioRef.current.pause();
-        audioRef.current.src = "";
-        audioRef.current.load();
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
   // ── Client-side Filtering ──────────────────────────────────────────────────
   const filteredSongs = useMemo(() => {
     if (!searchQuery.trim()) return songs;
@@ -85,70 +58,6 @@ function Songs() {
     );
   }, [songs, searchQuery]);
   // ──────────────────────────────────────────────────────────────────────────
-
-  const handlePlay = (song) => {
-    if (!song.filepath) return;
-
-    if (playingId === song._id) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        setIsBuffering(false);
-      } else {
-        setIsBuffering(true);
-        audioRef.current.play().catch(err => {
-          if (err.name !== "AbortError") console.error("Play aborted:", err);
-          setIsBuffering(false);
-        });
-        setIsPlaying(true);
-      }
-      return;
-    }
-
-    setIsBuffering(true);
-    setIsPlaying(false);
-
-    if (audioRef.current) {
-      audioRef.current.pause();
-      cleanupAudioListeners(audioRef.current);
-      audioRef.current.src = "";
-      audioRef.current.load();
-    }
-
-    const audio = new Audio(song.filepath);
-    audioRef.current = audio;
-    setPlayingId(song._id);
-
-    audio.oncanplay = () => {
-      setIsBuffering(false);
-      if (playingId === song._id || !playingId) {
-        audio.play().catch(err => {
-          if (err.name !== "AbortError") console.error("Playback failed:", err);
-        });
-        setIsPlaying(true);
-      }
-    };
-
-    audio.onwaiting = () => setIsBuffering(true);
-    audio.onplaying = () => setIsBuffering(false);
-
-    audio.onended = () => {
-      setIsPlaying(false);
-      setPlayingId(null);
-      setIsBuffering(false);
-    };
-
-    audio.onerror = () => {
-      if (audio.src && audio.src !== window.location.href) {
-        toast.error("Failed to load audio. URL might be expired or broken.");
-      }
-      setIsPlaying(false);
-      setPlayingId(null);
-      setIsBuffering(false);
-    };
-
-    audio.load();
-  };
 
   const openAddModal = (song) => {
     if (!token) {
@@ -174,7 +83,7 @@ function Songs() {
   };
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-28 md:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
+    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-32 md:pb-32 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
       <div className="container-custom">
         {/* Header Section with Search Bar */}
         <div className="flex flex-col gap-4 mb-8 sm:mb-10">
@@ -258,7 +167,7 @@ function Songs() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               <AnimatePresence mode="popLayout">
                 {filteredSongs.map((song, index) => {
-                  const isActive = playingId === song._id;
+                  const isActive = currentSong?._id === song._id;
                   const isCurrentPlaying = isActive && isPlaying;
                   const isCurrentBuffering = isActive && isBuffering;
 
@@ -274,7 +183,7 @@ function Songs() {
                     >
                       <div className="flex items-start justify-between mb-3 sm:mb-4">
                         <button
-                          onClick={() => handlePlay(song)}
+                          onClick={() => playSong(song)}
                           disabled={isCurrentBuffering}
                           className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all overflow-hidden relative focus:outline-none disabled:cursor-wait"
                         >
@@ -290,7 +199,7 @@ function Songs() {
                             {isCurrentBuffering ? (
                               <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
                             ) : isCurrentPlaying ? (
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--primary)]">
                                 <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0A.75.75 0 0115 4.5h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
                               </svg>
                             ) : (

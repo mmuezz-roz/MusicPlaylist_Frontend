@@ -6,7 +6,7 @@ import RegisterUser from "./assets/Components/register";
 
 import { useEffect } from 'react'
 import axios from "./api/axios";
-import { Route, Routes,BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import Loginser from './assets/Components/login';
 import Home from './assets/Components/Home';
 import Navbar from './assets/Components/Navbar';
@@ -18,25 +18,26 @@ import { Toaster } from "react-hot-toast";
 
 
 
-function App() {
-    return(
-        <>
-        {/* <BrowserRouter> */}
+import { AudioProvider } from './assets/Context/AudioContext';
+import GlobalPlayer from './assets/Components/GlobalPlayer';
 
-        <Toaster position='top-center'/>
-        <Navbar/>
-<Routes>
-    <Route path='/' element={<Loginser/>}/>
-    <Route path='/upload' element={<UploadSongs/>}/>
-<Route path='/register' element={<RegisterUser/>}/>
-<Route path='/login' element={<Loginser/>}/>
-    <Route path='/Home' element={<Home/>}/>
-    <Route path='/songs' element={<Songs/>}/>
-    {/* <Route path='/Uploadsongs' element={<uploadSongs/>}/> */}
-    <Route path='/playlist' element={<Playlist/>}/>
-</Routes>
-{/* </BrowserRouter> */}
-</>
-)}
+function App() {
+    return (
+        <AudioProvider>
+            <Toaster position='top-center' />
+            <Navbar />
+            <Routes>
+                <Route path='/' element={<Loginser />} />
+                <Route path='/upload' element={<UploadSongs />} />
+                <Route path='/register' element={<RegisterUser />} />
+                <Route path='/login' element={<Loginser />} />
+                <Route path='/Home' element={<Home />} />
+                <Route path='/songs' element={<Songs />} />
+                <Route path='/playlist' element={<Playlist />} />
+            </Routes>
+            <GlobalPlayer />
+        </AudioProvider>
+    )
+}
 
 export default App

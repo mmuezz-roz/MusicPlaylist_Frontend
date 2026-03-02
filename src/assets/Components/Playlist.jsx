@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAudio } from "../Context/AudioContext";
 
 function Playlist() {
   const [playlists, setPlaylists] = useState([]);
@@ -12,22 +13,7 @@ function Playlist() {
   const [showModal, setShowModal] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user")));
 
-  // ── Stable Global Audio Logic ─────────────────────────────────────────────
-  const audioRef = useRef(null);
-  const [playingId, setPlayingId] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isBuffering, setIsBuffering] = useState(false);
-
-  // Helper to remove listeners
-  const cleanupAudioListeners = (audio) => {
-    if (!audio) return;
-    audio.onended = null;
-    audio.onerror = null;
-    audio.oncanplay = null;
-    audio.onwaiting = null;
-    audio.onplaying = null;
-  };
-  // ──────────────────────────────────────────────────────────────────────────
+  const { currentSong, isPlaying, isBuffering, playSong } = useAudio();
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -46,84 +32,6 @@ function Playlist() {
   useEffect(() => {
     fetchPlaylists();
   }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        cleanupAudioListeners(audioRef.current);
-        audioRef.current.pause();
-        audioRef.current.src = "";
-        audioRef.current.load();
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  const handlePlay = (song) => {
-    if (!song.filepath) return;
-
-    if (playingId === song._id) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        setIsBuffering(false);
-      } else {
-        setIsBuffering(true);
-        audioRef.current.play().catch(err => {
-          if (err.name !== "AbortError") console.error("Play error:", err);
-          setIsBuffering(false);
-        });
-        setIsPlaying(true);
-      }
-      return;
-    }
-
-    // Switching to new song
-    setIsBuffering(true);
-    setIsPlaying(false);
-
-    if (audioRef.current) {
-      audioRef.current.pause();
-      cleanupAudioListeners(audioRef.current);
-      audioRef.current.src = "";
-      audioRef.current.load();
-    }
-
-    const audio = new Audio(song.filepath);
-    audioRef.current = audio;
-    setPlayingId(song._id);
-
-    audio.oncanplay = () => {
-      setIsBuffering(false);
-      if (playingId === song._id || !playingId) {
-        audio.play().catch(err => {
-          if (err.name !== "AbortError") console.error("Play failed:", err);
-        });
-        setIsPlaying(true);
-      }
-    };
-
-    audio.onwaiting = () => setIsBuffering(true);
-    audio.onplaying = () => setIsBuffering(false);
-
-    audio.onended = () => {
-      setIsPlaying(false);
-      setPlayingId(null);
-      setIsBuffering(false);
-    };
-
-    audio.onerror = () => {
-      if (audio.src && audio.src !== window.location.href) {
-        toast.error("Failed to load audio from source.");
-      }
-      setIsPlaying(false);
-      setPlayingId(null);
-      setIsBuffering(false);
-    };
-
-    audio.load();
-  };
 
   const handleCreatePlaylist = async () => {
     if (!token) return navigate("/login"), toast.error("Please Login");
@@ -181,7 +89,7 @@ function Playlist() {
   };
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-28 md:pb-12 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
+    <div className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-32 md:pb-32 px-4 sm:px-6 lg:px-8 bg-[var(--background)]">
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -304,7 +212,7 @@ function Playlist() {
 
                   <div className="space-y-1">
                     {songs.map((song, index) => {
-                      const isActive = playingId === song._id;
+                      const isActive = currentSong?._id === song._id;
                       const isCurrentPlaying = isActive && isPlaying;
                       const isCurrentBuffering = isActive && isBuffering;
 
@@ -318,7 +226,7 @@ function Playlist() {
                         >
                           {/* Play/Buffering Cell */}
                           <button
-                            onClick={() => handlePlay(song)}
+                            onClick={() => playSong(song)}
                             disabled={isCurrentBuffering}
                             className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden border border-[var(--border)] relative"
                           >
@@ -329,7 +237,7 @@ function Playlist() {
                               {isCurrentBuffering ? (
                                 <div className="w-4 h-4 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
                               ) : isCurrentPlaying ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[var(--primary)]" viewBox="0 0 20 20" fill="currentColor">
                                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>
                               ) : (
