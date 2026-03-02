@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,12 @@ function Playlist() {
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user")))
+
+  // ── Single global audio instance ──────────────────────────────────────────
+  const audioRef = useRef(null);
+  const [playingId, setPlayingId] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  // ──────────────────────────────────────────────────────────────────────────
 
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
@@ -27,6 +33,55 @@ function Playlist() {
   useEffect(() => {
     fetchPlaylists();
   }, []);
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const handlePlay = (song) => {
+    if (!song.filepath) return;
+
+    if (playingId === song._id) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play().catch(console.error);
+        setIsPlaying(true);
+      }
+      return;
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    }
+
+    const audio = new Audio(song.filepath);
+    audioRef.current = audio;
+
+    audio.addEventListener("ended", () => {
+      setIsPlaying(false);
+      setPlayingId(null);
+    });
+
+    audio.addEventListener("error", () => {
+      toast.error("Failed to load audio");
+      setIsPlaying(false);
+      setPlayingId(null);
+    });
+
+    audio.play().catch(console.error);
+    setPlayingId(song._id);
+    setIsPlaying(true);
+  };
 
   const handleCreatePlaylist = async () => {
     if (!token) return navigate("/login"), toast.error("Please Login")
@@ -232,46 +287,57 @@ function Playlist() {
                         </button>
                       </div>
                     ) : (
-                      songs.map((song, index) => (
-                        <motion.div
-                          key={song._id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="group flex items-center gap-4 p-3 hover:bg-[var(--surface-hover)] rounded-lg transition-colors border border-transparent hover:border-[var(--border)]"
-                        >
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden flex-shrink-0 border border-[var(--border)]">
-                            {song.coverImage ? (
-                              <img src={song.coverImage} alt={song.title} className="w-full h-full object-cover" />
-                            ) : (
-                              <div className="text-xs font-mono">{index + 1}</div>
-                            )}
-                          </div>
+                      songs.map((song, index) => {
+                        const playing = playingId === song._id && isPlaying;
 
-                          <div className="flex-grow min-w-0">
-                            <h4 className="font-medium text-[var(--text-main)] truncate text-sm">{song.title}</h4>
-                            <p className="text-[var(--text-muted)] text-xs truncate">{song.artist}</p>
-                          </div>
-
-                          {song.filepath && (
-                            <div className="w-28 sm:w-32 md:w-48">
-                              <audio controls className="w-full h-7 sm:h-8 scale-90 origin-right opacity-60 hover:opacity-100 transition-opacity invert dark:invert-0">
-                                <source src={song.filepath} type="audio/mp3" />
-                              </audio>
-                            </div>
-                          )}
-
-                          <button
-                            onClick={() => RemoveSongFMplaylist(selectedPlaylistId, song._id)}
-                            className="p-2 text-[var(--text-muted)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                            title="Remove from playlist"
+                        return (
+                          <motion.div
+                            key={song._id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="group flex items-center gap-4 p-3 hover:bg-[var(--surface-hover)] rounded-lg transition-colors border border-transparent hover:border-[var(--border)]"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                            </svg>
-                          </button>
-                        </motion.div>
-                      ))
+                            <button
+                              onClick={() => handlePlay(song)}
+                              className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden flex-shrink-0 border border-[var(--border)] relative"
+                            >
+                              {song.coverImage ? (
+                                <img src={song.coverImage} alt={song.title} className={`w-full h-full object-cover ${playing ? "opacity-40" : "opacity-100"}`} />
+                              ) : (
+                                <div className="text-xs font-mono">{index + 1}</div>
+                              )}
+
+                              <div className={`absolute inset-0 flex items-center justify-center ${playing ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                                {playing ? (
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[var(--text-main)]">
+                                    <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0A.75.75 0 0115 4.5h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
+                                  </svg>
+                                ) : (
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[var(--text-main)]">
+                                    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                              </div>
+                            </button>
+
+                            <div className="flex-grow min-w-0">
+                              <h4 className="font-medium text-[var(--text-main)] truncate text-sm">{song.title}</h4>
+                              <p className="text-[var(--text-muted)] text-xs truncate">{song.artist}</p>
+                            </div>
+
+                            <button
+                              onClick={() => RemoveSongFMplaylist(selectedPlaylistId, song._id)}
+                              className="p-2 text-[var(--text-muted)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                              title="Remove from playlist"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                              </svg>
+                            </button>
+                          </motion.div>
+                        );
+                      })
                     )}
                   </div>
                 </motion.div>
