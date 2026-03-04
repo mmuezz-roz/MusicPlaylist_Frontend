@@ -131,7 +131,7 @@ function Navbar() {
                   Log In
                 </button>
                 <button
-                  className="btn-primary text-xs sm:text-sm px-4 sm:px-4 py-1.5 sm:py-2 h-[34px] sm:h-auto flex items-center"
+                  className="hidden sm:flex btn-primary text-xs sm:text-sm px-4 sm:px-4 py-1.5 sm:py-2 h-[34px] sm:h-auto items-center"
                   onClick={() => navigate("/register")}
                 >
                   Get Started
