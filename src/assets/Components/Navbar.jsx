@@ -121,27 +121,20 @@ function Navbar() {
               )}
             </button>
 
-            {/* Desktop Auth Buttons */}
+            {/* Auth Buttons */}
             {!token ? (
               <div className="flex items-center gap-2 lg:gap-3">
                 <button
-                  className="hidden md:block text-xs sm:text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors px-2 sm:px-3 py-2"
-                  onClick={() => navigate("/login")}
-                >
-                  Sign In
-                </button>
-                <button
-                  className="hidden md:flex btn-primary text-xs sm:text-sm px-3 sm:px-4 py-2"
-                  onClick={() => navigate("/register")}
-                >
-                  Get Started
-                </button>
-                {/* Mobile Login Button Small */}
-                <button
-                  className="md:hidden btn-primary text-xs px-3 py-1.5 h-8"
+                  className="text-xs sm:text-sm font-medium text-[var(--text-main)] sm:text-[var(--text-muted)] hover:text-[var(--text-main)] bg-[var(--surface-hover)] sm:bg-transparent border border-[var(--border)] sm:border-transparent rounded-full px-4 sm:px-3 py-1.5 sm:py-2 h-[34px] sm:h-auto transition-colors flex items-center"
                   onClick={() => navigate("/login")}
                 >
                   Log In
+                </button>
+                <button
+                  className="btn-primary text-xs sm:text-sm px-4 sm:px-4 py-1.5 sm:py-2 h-[34px] sm:h-auto flex items-center"
+                  onClick={() => navigate("/register")}
+                >
+                  Get Started
                 </button>
               </div>
             ) : (

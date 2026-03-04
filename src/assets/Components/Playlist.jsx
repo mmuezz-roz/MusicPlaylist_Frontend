@@ -228,7 +228,7 @@ function Playlist() {
                           <button
                             onClick={() => playSong(song)}
                             disabled={isCurrentBuffering}
-                            className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden border border-[var(--border)] relative"
+                            className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden border border-[var(--border)] relative"
                           >
                             {song.coverImage && (
                               <img src={song.coverImage} alt={song.title} className={`w-full h-full object-cover absolute inset-0 ${isCurrentPlaying ? "opacity-30" : "opacity-100"}`} />
