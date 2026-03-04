@@ -130,12 +130,14 @@ function Navbar() {
                 >
                   Log In
                 </button>
-                <button
-                  className="hidden md:flex btn-primary text-xs sm:text-sm px-4 sm:px-4 py-1.5 sm:py-2 h-[34px] sm:h-auto items-center"
-                  onClick={() => navigate("/register")}
-                >
-                  Get Started
-                </button>
+                <div className="hidden md:block">
+                  <button
+                    className="btn-primary text-xs sm:text-sm px-4 sm:px-4 py-1.5 sm:py-2 h-[34px] sm:h-auto flex items-center"
+                    onClick={() => navigate("/register")}
+                  >
+                    Get Started
+                  </button>
+                </div>
               </div>
             ) : (
               <button
