@@ -13,7 +13,6 @@ function Playlist() {
   const [showModal, setShowModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user")));
-  const [isCreating, setIsCreating] = useState(false);
 
   const { currentSong, isPlaying, isBuffering, playSong } = useAudio();
 
@@ -207,7 +206,7 @@ function Playlist() {
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="sm:hidden p-2 bg-[var(--surface-hover)] hover:bg-[var(--border)] rounded-full transition-colors text-[var(--text-main)]"
+            className="md:hidden p-2 bg-[var(--surface-hover)] hover:bg-[var(--border)] rounded-full transition-colors text-[var(--text-main)]"
             aria-label="New Playlist"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -216,7 +215,7 @@ function Playlist() {
           </button>
         </div>
 
-        <div className="hidden sm:flex bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 shadow-sm max-w-md">
+        <div className="hidden md:flex bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 shadow-sm max-w-md">
           <input
             value={playlistName}
             onChange={(e) => setPlaylistName(e.target.value)}
@@ -225,13 +224,12 @@ function Playlist() {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleCreatePlaylist();
-                setIsCreating(false);
               }
             }}
           />
           <button
             onClick={handleCreatePlaylist}
-            className="hidden sm:block bg-[var(--primary)] text-[var(--primary-text)] px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
+            className="hidden md:block bg-[var(--primary)] text-[var(--primary-text)] px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
           >
             Create
           </button>
