@@ -239,24 +239,33 @@ function Playlist() {
           {/* Playlists Sidebar */}
           <div className="lg:col-span-4 space-y-3">
             <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2 px-1">Playlists</h3>
-            {playlists.map((pl) => (
+            {playlists.map((pl, index) => (
               <motion.div
                 key={pl._id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                whileHover={{ x: 5 }}
-                transition={{ delay: index * 0.05 }}
-                className={`p-3 rounded-xl cursor-pointer transition-all flex justify-between items-center group mb-1 ${selectedPlaylistId === pl._id
-                  ? "bg-[var(--primary)] text-[var(--primary-text)] shadow-lg shadow-[var(--primary)]/20"
-                  : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-main)]"
+                whileHover={{
+                  x: 8,
+                  backgroundColor: selectedPlaylistId === pl._id ? "var(--primary)" : "var(--surface-hover)",
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ delay: index * 0.05, type: "spring", stiffness: 400, damping: 25 }}
+                className={`p-3.5 rounded-2xl cursor-pointer transition-all flex justify-between items-center group mb-2 border border-transparent ${selectedPlaylistId === pl._id
+                  ? "bg-[var(--primary)] text-[var(--primary-text)] shadow-xl shadow-[var(--primary)]/30 border-[var(--primary)]"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--border)]"
                   }`}
                 onClick={() => toggleSongs(pl._id)}
               >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                  </svg>
-                  <span className="font-medium truncate text-sm">{pl.title}</span>
+                <div className="flex items-center gap-3.5 overflow-hidden">
+                  <motion.div
+                    animate={{ rotate: selectedPlaylistId === pl._id ? 5 : 0 }}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${selectedPlaylistId === pl._id ? 'bg-white/20' : 'bg-[var(--surface-hover)]'}`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                    </svg>
+                  </motion.div>
+                  <span className="font-bold truncate text-sm sm:text-base">{pl.title}</span>
                 </div>
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <span className="text-xs opacity-50">{pl.songs.length}</span>
@@ -339,14 +348,16 @@ function Playlist() {
                             <p className="text-[var(--text-muted)] text-xs truncate font-medium">{song.artist}</p>
                           </div>
 
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.2, color: 'rgb(239 44 44)' }}
+                            whileTap={{ scale: 0.8 }}
                             onClick={() => RemoveSongFMplaylist(selectedPlaylistId, song._id)}
-                            className="p-2 text-[var(--text-muted)] hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                            className="p-2 text-[var(--text-muted)] transition-all opacity-0 group-hover:opacity-100 bg-[var(--surface-hover)] rounded-lg hover:shadow-md"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
-                          </button>
+                          </motion.button>
                         </motion.div>
                       );
                     })}

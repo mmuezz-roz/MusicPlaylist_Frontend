@@ -180,60 +180,83 @@ function Songs() {
                       initial={{ opacity: 0, scale: 0.9, y: 20 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      whileHover={{ y: -5 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      className={`minimal-card p-4 sm:p-5 rounded-2xl bg-[var(--surface)] group hover:shadow-xl transition-all relative overflow-hidden border border-[var(--border)] hover:border-[var(--primary)]/30 ${isActive ? 'ring-2 ring-[var(--primary)]' : ''}`}
+                      whileHover={{
+                        y: -8,
+                        scale: 1.02,
+                        boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+                      }}
+                      transition={{
+                        duration: 0.3,
+                        delay: index * 0.05,
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 20
+                      }}
+                      className={`minimal-card p-4 sm:p-5 rounded-2xl bg-[var(--surface)] group transition-all relative overflow-hidden border border-[var(--border)] hover:border-[var(--primary)]/40 ${isActive ? 'ring-2 ring-[var(--primary)]' : ''}`}
                     >
                       <div className="flex items-start justify-between mb-3 sm:mb-4">
                         <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => playSong(song)}
                           disabled={isCurrentBuffering}
-                          className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-xl flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all overflow-hidden relative focus:outline-none disabled:cursor-wait group-hover:shadow-lg"
+                          className="w-12 h-12 sm:w-20 sm:h-20 bg-[var(--surface-hover)] border border-[var(--border)] rounded-2xl flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all overflow-hidden relative focus:outline-none disabled:cursor-wait group-hover:shadow-2xl"
                         >
                           {song.coverImage && (
-                            <img
+                            <motion.img
+                              whileHover={{ scale: 1.2 }}
                               src={song.coverImage}
                               alt={song.title}
-                              className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${isCurrentPlaying ? "opacity-30" : "opacity-100 group-hover:opacity-60"}`}
+                              className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${isCurrentPlaying ? "opacity-40" : "opacity-100 group-hover:opacity-50"}`}
                             />
                           )}
 
-                          <div className="relative z-10 transition-transform group-hover:scale-110">
+                          <div className="relative z-10 transition-all duration-300 transform group-hover:scale-125 group-hover:drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]">
                             {isCurrentBuffering ? (
-                              <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
+                              <div className="w-5 h-5 sm:w-8 sm:h-8 border-3 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
                             ) : isCurrentPlaying ? (
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--primary)]">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 sm:w-10 sm:h-10 text-[var(--primary)]">
                                 <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0A.75.75 0 0115 4.5h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
                               </svg>
                             ) : (
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={`w-6 h-6 sm:w-7 sm:h-7 ${isActive ? "text-[var(--text-main)]" : "opacity-0 group-hover:opacity-100"}`}>
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={`w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 ${isActive ? "text-[var(--text-main)]" : "opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100"}`}>
                                 <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                               </svg>
                             )}
                           </div>
                         </motion.button>
 
-                        <button
+                        <motion.button
+                          whileHover={{ scale: 1.2, rotate: 90 }}
+                          whileTap={{ scale: 0.9 }}
                           onClick={() => openAddModal(song)}
-                          className="text-[var(--text-muted)] hover:text-[var(--text-main)] p-1.5 transition-colors"
+                          className="bg-[var(--surface-hover)] text-[var(--text-muted)] hover:text-[var(--primary)] p-2.5 rounded-xl transition-all border border-[var(--border)] hover:border-[var(--primary)]/30 group-hover:shadow-lg"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                           </svg>
-                        </button>
+                        </motion.button>
                       </div>
 
-                      <h3 className="font-semibold text-base sm:text-lg text-[var(--text-main)] truncate mb-0.5">{song.title}</h3>
-                      <p className={`text-xs sm:text-sm truncate font-medium ${isActive ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'}`}>
-                        {song.artist}
-                        {isCurrentPlaying && <span className="ml-2 inline-flex gap-0.5">
-                          <span className="w-0.5 h-3 bg-[var(--primary)] animate-pulse"></span>
-                          <span className="w-0.5 h-3 bg-[var(--primary)] animate-pulse delay-75"></span>
-                          <span className="w-0.5 h-3 bg-[var(--primary)] animate-pulse delay-150"></span>
-                        </span>}
-                      </p>
+                      <motion.div
+                        initial={false}
+                        whileHover={{ x: 2 }}
+                        className="transition-all"
+                      >
+                        <h3 className="font-bold text-base sm:text-xl text-[var(--text-main)] truncate mb-0.5 group-hover:text-[var(--primary)] transition-colors">{song.title}</h3>
+                        <p className={`text-xs sm:text-sm truncate font-bold uppercase tracking-wider ${isActive ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] group-hover:text-[var(--text-main)]'}`}>
+                          {song.artist}
+                          {isCurrentPlaying && <motion.span
+                            animate={{ scaleY: [1, 1.5, 1] }}
+                            transition={{ repeat: Infinity, duration: 0.5 }}
+                            className="ml-2 inline-flex gap-1 items-end h-3"
+                          >
+                            <span className="w-1 bg-[var(--primary)] h-full rounded-full"></span>
+                            <span className="w-1 bg-[var(--primary)] h-[70%] rounded-full delay-75"></span>
+                            <span className="w-1 bg-[var(--primary)] h-[40%] rounded-full delay-150"></span>
+                          </motion.span>}
+                        </p>
+                      </motion.div>
                     </motion.div>
                   );
                 })}
