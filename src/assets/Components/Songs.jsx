@@ -106,7 +106,7 @@ function Songs() {
                   placeholder="Search songs or artists..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-11 bg-[var(--surface-hover)] border border-[var(--border)] rounded-full pl-10 pr-10 text-sm text-[var(--text-main)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] transition-all placeholder-[var(--text-muted)]"
+                  className="w-full h-11 bg-[var(--surface-hover)] border border-[var(--border)] rounded-full pl-10 pr-10 text-sm text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)] transition-all placeholder-[var(--text-muted)] group-hover:bg-[var(--surface)] shadow-inner"
                 />
                 {searchQuery && (
                   <button
@@ -121,12 +121,14 @@ function Songs() {
               </div>
             </div>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/upload")}
-              className="btn-primary text-xs sm:text-sm whitespace-nowrap px-4 sm:px-6"
+              className="btn-primary text-xs sm:text-sm whitespace-nowrap px-4 sm:px-6 shadow-lg shadow-[var(--primary)]/20"
             >
               Upload Track
-            </button>
+            </motion.button>
           </div>
 
           {/* Mobile Search Bar (Sticky) */}
@@ -175,27 +177,30 @@ function Songs() {
                     <motion.div
                       key={song._id}
                       layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className={`minimal-card p-4 sm:p-5 rounded-xl bg-[var(--surface)] group hover:shadow-md transition-shadow relative overflow-hidden ${isActive ? 'border-[var(--primary)]' : ''}`}
+                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      whileHover={{ y: -5 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className={`minimal-card p-4 sm:p-5 rounded-2xl bg-[var(--surface)] group hover:shadow-xl transition-all relative overflow-hidden border border-[var(--border)] hover:border-[var(--primary)]/30 ${isActive ? 'ring-2 ring-[var(--primary)]' : ''}`}
                     >
                       <div className="flex items-start justify-between mb-3 sm:mb-4">
-                        <button
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
                           onClick={() => playSong(song)}
                           disabled={isCurrentBuffering}
-                          className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all overflow-hidden relative focus:outline-none disabled:cursor-wait"
+                          className="w-12 h-12 sm:w-16 sm:h-16 bg-[var(--surface-hover)] border border-[var(--border)] rounded-xl flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all overflow-hidden relative focus:outline-none disabled:cursor-wait group-hover:shadow-lg"
                         >
                           {song.coverImage && (
                             <img
                               src={song.coverImage}
                               alt={song.title}
-                              className={`w-full h-full object-cover absolute inset-0 transition-opacity ${isCurrentPlaying ? "opacity-30" : "opacity-100"}`}
+                              className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${isCurrentPlaying ? "opacity-30" : "opacity-100 group-hover:opacity-60"}`}
                             />
                           )}
 
-                          <div className="relative z-10">
+                          <div className="relative z-10 transition-transform group-hover:scale-110">
                             {isCurrentBuffering ? (
                               <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
                             ) : isCurrentPlaying ? (
@@ -208,7 +213,7 @@ function Songs() {
                               </svg>
                             )}
                           </div>
-                        </button>
+                        </motion.button>
 
                         <button
                           onClick={() => openAddModal(song)}

@@ -22,9 +22,10 @@ function GlobalPlayer() {
 
     return (
         <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            className="fixed bottom-[72px] md:bottom-0 left-0 right-0 z-[60] bg-[var(--surface)]/95 backdrop-blur-xl border-t border-[var(--border)] px-4 py-3 md:py-4 shadow-2xl"
+            initial={{ y: 120, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "spring", damping: 20, stiffness: 100 }}
+            className="fixed bottom-[72px] md:bottom-0 left-0 right-0 z-[60] bg-[var(--surface)]/90 backdrop-blur-2xl border-t border-[var(--border)] px-4 py-3 md:py-4 shadow-[0_-10px_40px_rgba(0,0,0,0.3)]"
         >
             <div className="container-custom flex items-center gap-4 md:gap-8 justify-between">
                 {/* SONG INFO */}
@@ -50,23 +51,29 @@ function GlobalPlayer() {
                 <div className="flex-grow flex flex-col items-center max-w-[600px] gap-1 md:gap-2">
                     {/* Controls */}
                     <div className="flex items-center gap-4 md:gap-6">
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={togglePlay}
                             disabled={isBuffering}
-                            className="w-8 h-8 md:w-11 md:h-11 bg-[var(--text-main)] text-[var(--background)] rounded-full flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-50"
+                            className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all disabled:opacity-50 ${isPlaying ? 'bg-[var(--primary)] text-[var(--primary-text)]' : 'bg-[var(--text-main)] text-[var(--background)]'}`}
                         >
                             {isBuffering ? (
-                                <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-[var(--background)] border-t-transparent rounded-full animate-spin"></div>
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                    className="w-5 h-5 md:w-6 md:h-6 border-2 border-current border-t-transparent rounded-full"
+                                />
                             ) : isPlaying ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-6 md:w-6" viewBox="0 0 24 24" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" viewBox="0 0 24 24" fill="currentColor">
                                     <path fillRule="evenodd" d="M6.75 5.25a.75.75 0 01.75-.75H9a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H7.5a.75.75 0 01-.75-.75V5.25zm7.5 0A.75.75 0 0115 4.5h1.5a.75.75 0 01.75.75v13.5a.75.75 0 01-.75.75H15a.75.75 0 01-.75-.75V5.25z" clipRule="evenodd" />
                                 </svg>
                             ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-6 md:w-6 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6 ml-1" viewBox="0 0 24 24" fill="currentColor">
                                     <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
                                 </svg>
                             )}
-                        </button>
+                        </motion.button>
                     </div>
 
                     {/* Progress Bar & Time */}
@@ -78,10 +85,14 @@ function GlobalPlayer() {
                         <div className="relative group flex-grow h-1.5 md:h-2 flex items-center">
                             {/* Background track */}
                             <div className="absolute inset-0 bg-[var(--surface-hover)] rounded-full border border-[var(--border)]/50 overflow-hidden">
-                                <div
-                                    className="h-full bg-[var(--primary)] transition-all ease-linear"
-                                    style={{ width: `${progressPercent}%` }}
-                                />
+                                <motion.div
+                                    initial={false}
+                                    animate={{ width: `${progressPercent}%` }}
+                                    className="h-full bg-[var(--primary)] transition-all ease-linear relative"
+                                    transition={{ type: "tween", duration: 0.1 }}
+                                >
+                                    <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-white/20 to-transparent" />
+                                </motion.div>
                             </div>
 
                             {/* Interactive range input */}

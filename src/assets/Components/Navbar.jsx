@@ -78,14 +78,16 @@ function Navbar() {
           {/* LOGO */}
           <motion.div
             onClick={() => navigate("/")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group flex-shrink-0 relative z-50"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center text-[var(--primary-text)] transition-colors">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-[var(--primary)] rounded-lg flex items-center justify-center text-[var(--primary-text)] transition-all group-hover:shadow-lg group-hover:shadow-[var(--primary)]/30">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 sm:w-4 sm:h-4">
                 <path fillRule="evenodd" d="M19.952 1.651a.75.75 0 01.298.599V16.303a3 3 0 01-2.176 2.884l-4.69 1.563a6 6 0 00-4.382-3.238l-4.72-1.258a3 3 0 01-2.2-2.906V5.454c0-.361.127-.714.363-.984a.75.75 0 01.385-.262l12.35-3.07a.75.75 0 01.554.126.375.375 0 01.218.387z" clipRule="evenodd" />
               </svg>
             </div>
-            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-[var(--text-main)] group-hover:opacity-70 transition-opacity">
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-[var(--text-main)] transition-all group-hover:text-[var(--primary)]">
               MelodyHub
             </h1>
           </motion.div>
@@ -165,10 +167,29 @@ function Navbar() {
               <Link
                 key={item}
                 to={item === 'Home' ? '/Home' : `/${item.toLowerCase()}`}
-                className={`flex flex-col items-center justify-center w-full h-full transition-all duration-200 active:scale-90 ${active ? 'text-[var(--text-main)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}
+                className={`flex flex-col items-center justify-center w-full h-full relative transition-all duration-300 ${active ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'}`}
               >
-                {getIcon(item, active)}
-                <span className="text-[10px] font-medium tracking-wide">{item === 'Playlist' ? 'Library' : item}</span>
+                <motion.div
+                  initial={false}
+                  animate={{
+                    y: active ? -4 : 0,
+                    scale: active ? 1.1 : 1
+                  }}
+                  className="flex flex-col items-center"
+                >
+                  {getIcon(item, active)}
+                  <span className={`text-[10px] font-bold tracking-wide transition-all ${active ? 'opacity-100' : 'opacity-70'}`}>
+                    {item === 'Playlist' ? 'Library' : item}
+                  </span>
+                </motion.div>
+
+                {active && (
+                  <motion.div
+                    layoutId="activeTabIndicator"
+                    className="absolute -bottom-1 w-1 h-1 bg-[var(--primary)] rounded-full"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
               </Link>
             )
           })}

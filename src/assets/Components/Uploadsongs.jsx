@@ -172,15 +172,19 @@ function UploadSongs() {
       >
         <div className="minimal-card p-6 sm:p-8 md:p-10 lg:p-12 rounded-xl sm:rounded-2xl bg-[var(--surface)]">
           <div className="text-center mb-8 sm:mb-10">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--primary)] rounded-lg sm:rounded-xl flex items-center justify-center text-[var(--primary-text)] mx-auto mb-4 sm:mb-6 shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+            <motion.div
+              whileHover={{ rotate: 360, scale: 1.1 }}
+              transition={{ type: "spring", damping: 10 }}
+              className="w-10 h-10 sm:w-14 sm:h-14 bg-[var(--primary)] rounded-lg sm:rounded-2xl flex items-center justify-center text-[var(--primary-text)] mx-auto mb-4 sm:mb-6 shadow-xl shadow-[var(--primary)]/20"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 sm:w-8 sm:h-8">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
               </svg>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-main)] mb-2">
+            </motion.div>
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-[var(--text-main)] mb-2">
               Upload Track
             </h1>
-            <p className="text-[var(--text-muted)] text-xs sm:text-sm">Add new music to your library</p>
+            <p className="text-[var(--text-muted)] text-xs sm:text-base font-medium">Add new music to your private collection</p>
           </div>
 
           <form onSubmit={HandleSubmit} className="space-y-5 sm:space-y-6">
@@ -212,7 +216,11 @@ function UploadSongs() {
               {/* Cover Image */}
               <div className="space-y-2">
                 <label className="text-xs sm:text-sm font-semibold text-[var(--text-muted)] ml-1">Cover Image (Optional)</label>
-                <div className="relative group">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative group"
+                >
                   <input
                     type="file"
                     accept="image/*"
@@ -230,26 +238,34 @@ function UploadSongs() {
                   />
                   <label
                     htmlFor="cover-upload"
-                    className="flex flex-col items-center justify-center w-full h-28 sm:h-32 bg-[var(--surface-hover)] border-2 border-dashed border-[var(--border)] rounded-xl cursor-pointer hover:opacity-80 transition-all overflow-hidden relative"
+                    className="flex flex-col items-center justify-center w-full h-32 sm:h-40 bg-[var(--surface-hover)] border-2 border-dashed border-[var(--border)] rounded-2xl cursor-pointer hover:border-[var(--primary)] transition-all overflow-hidden relative shadow-inner group"
                   >
                     {preview ? (
-                      <img src={preview} alt="Cover preview" className="w-full h-full object-cover" />
+                      <motion.img
+                        initial={{ opacity: 0, scale: 1.1 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        src={preview} alt="Cover preview" className="w-full h-full object-cover"
+                      />
                     ) : (
-                      <div className="flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-muted)] mb-2">
+                      <div className="flex flex-col items-center justify-center p-4 transition-transform group-hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--text-muted)] mb-2 group-hover:text-[var(--primary)] transition-colors">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                         </svg>
-                        <p className="text-xs sm:text-sm text-[var(--text-muted)] px-3 text-center">Upload Cover</p>
+                        <p className="text-xs sm:text-sm text-[var(--text-muted)] font-bold group-hover:text-[var(--primary)] transition-colors">Upload Cover</p>
                       </div>
                     )}
                   </label>
-                </div>
+                </motion.div>
               </div>
 
               {/* Audio File */}
               <div className="space-y-2">
                 <label className="text-xs sm:text-sm font-semibold text-[var(--text-muted)] ml-1">Audio File</label>
-                <div className="relative group">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative group"
+                >
                   <input
                     type="file"
                     accept="audio/*"
@@ -259,17 +275,17 @@ function UploadSongs() {
                   />
                   <label
                     htmlFor="file-upload"
-                    className="flex flex-col items-center justify-center w-full h-28 sm:h-32 bg-[var(--surface-hover)] border-2 border-dashed border-[var(--border)] rounded-xl cursor-pointer hover:opacity-80 transition-all"
+                    className="flex flex-col items-center justify-center w-full h-32 sm:h-40 bg-[var(--surface-hover)] border-2 border-dashed border-[var(--border)] rounded-2xl cursor-pointer hover:border-[var(--primary)] transition-all shadow-inner group"
                   >
-                    <div className="flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--text-muted)] mb-2">
+                    <div className="flex flex-col items-center justify-center p-4 transition-transform group-hover:scale-110">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--text-muted)] mb-3 group-hover:text-[var(--primary)] transition-colors">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.59c.97-.276 1.94-.386 2.943-.324M5.653 5.441l.955.516l2.153-1.166l-1.66-2.195l-1.448.845z" />
                       </svg>
-                      <p className="text-xs sm:text-sm text-[var(--text-muted)] px-3 text-center">
+                      <p className="text-xs sm:text-sm text-[var(--text-muted)] px-3 text-center font-bold group-hover:text-[var(--primary)] transition-colors">
                         {file ? (
-                          <span className="text-[var(--text-main)] font-medium block">
+                          <span className="text-[var(--primary)] block">
                             {file.name}
-                            <span className="block text-xs text-[var(--text-muted)] mt-1">
+                            <span className="block text-xs opacity-70 mt-1">
                               {(file.size / (1024 * 1024)).toFixed(1)} MB
                             </span>
                           </span>
@@ -277,7 +293,7 @@ function UploadSongs() {
                       </p>
                     </div>
                   </label>
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -306,20 +322,26 @@ function UploadSongs() {
               </p>
             )}
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full btn-primary h-11 sm:h-12 text-sm sm:text-base shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full btn-primary h-12 sm:h-14 text-sm sm:text-lg font-bold shadow-xl shadow-[var(--primary)]/20 disabled:opacity-70 disabled:cursor-not-allowed mt-4"
               disabled={isUploading || !file || !SongData.title || !SongData.artist}
             >
               {isUploading ? (
-                <div className="flex items-center gap-2 justify-center">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="flex items-center gap-3 justify-center">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                  />
                   <span>{stageLabel || "Uploading..."}</span>
                 </div>
               ) : (
                 "Upload to Cloud"
               )}
-            </button>
+            </motion.button>
           </form>
         </div>
       </motion.div>

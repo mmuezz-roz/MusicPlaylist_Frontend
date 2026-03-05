@@ -56,7 +56,10 @@ function Home() {
           variants={itemVariants}
           className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center w-full sm:w-auto px-4 sm:px-0"
         >
-          <button
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => {
               const token = localStorage.getItem("token");
               if (token) {
@@ -65,13 +68,19 @@ function Home() {
                 navigate("/login");
               }
             }}
-            className="btn-primary w-full sm:w-auto"
+            className="btn-primary w-full sm:w-auto shadow-lg shadow-[var(--primary)]/20"
           >
             Start Listening
-          </button>
-          <button onClick={() => navigate("/songs")} className="btn-secondary w-full sm:w-auto">
+          </motion.button>
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/songs")}
+            className="btn-secondary w-full sm:w-auto"
+          >
             Browse Library
-          </button>
+          </motion.button>
         </motion.div>
 
         {/* Feature Cards */}
@@ -80,31 +89,33 @@ function Home() {
           className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-4 w-full px-4 sm:px-0"
         >
           <motion.div
-            whileHover={{ y: -2 }}
-            className="minimal-card p-5 sm:p-6 rounded-xl text-left cursor-pointer group bg-[var(--surface)]"
+            variants={itemVariants}
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="minimal-card p-5 sm:p-6 rounded-2xl text-left cursor-pointer group bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--primary)]/30 transition-all shadow-sm hover:shadow-xl"
             onClick={() => navigate("/upload")}
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-main)] mb-3 sm:mb-4 group-hover:opacity-80 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+            <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[var(--surface-hover)] border border-[var(--border)] rounded-xl flex items-center justify-center text-[var(--text-main)] mb-3 sm:mb-4 group-hover:bg-[var(--primary)] group-hover:text-[var(--primary-text)] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
               </svg>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-2 text-[var(--text-main)]">Upload Tracks</h3>
-            <p className="text-xs sm:text-sm text-[var(--text-muted)]">Securely store your audio files in the cloud.</p>
+            <h3 className="text-base sm:text-xl font-bold mb-2 text-[var(--text-main)] group-hover:text-[var(--primary)] transition-colors">Upload Tracks</h3>
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">Securely store your audio files in the cloud and access them from any device.</p>
           </motion.div>
 
           <motion.div
-            whileHover={{ y: -2 }}
-            className="minimal-card p-5 sm:p-6 rounded-xl text-left cursor-pointer group bg-[var(--surface)]"
+            variants={itemVariants}
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="minimal-card p-5 sm:p-6 rounded-2xl text-left cursor-pointer group bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--primary)]/30 transition-all shadow-sm hover:shadow-xl"
             onClick={() => navigate("/playlist")}
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[var(--surface-hover)] border border-[var(--border)] rounded-lg flex items-center justify-center text-[var(--text-main)] mb-3 sm:mb-4 group-hover:opacity-80 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
+            <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[var(--surface-hover)] border border-[var(--border)] rounded-xl flex items-center justify-center text-[var(--text-main)] mb-3 sm:mb-4 group-hover:bg-[var(--primary)] group-hover:text-[var(--primary-text)] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
               </svg>
             </div>
-            <h3 className="text-base sm:text-lg font-semibold mb-2 text-[var(--text-main)]">Organize Playlists</h3>
-            <p className="text-xs sm:text-sm text-[var(--text-muted)]">Curate your perfect mix for every mood.</p>
+            <h3 className="text-base sm:text-xl font-bold mb-2 text-[var(--text-main)] group-hover:text-[var(--primary)] transition-colors">Organize Playlists</h3>
+            <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">Curate your perfect mix for every mood with our intuitive playlist builder.</p>
           </motion.div>
         </motion.div>
       </motion.div>

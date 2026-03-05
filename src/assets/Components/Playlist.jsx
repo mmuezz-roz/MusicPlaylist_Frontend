@@ -242,10 +242,12 @@ function Playlist() {
             {playlists.map((pl) => (
               <motion.div
                 key={pl._id}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className={`p-3 rounded-lg cursor-pointer transition-all flex justify-between items-center group ${selectedPlaylistId === pl._id
-                  ? "bg-[var(--surface-hover)] text-[var(--text-main)]"
+                whileHover={{ x: 5 }}
+                transition={{ delay: index * 0.05 }}
+                className={`p-3 rounded-xl cursor-pointer transition-all flex justify-between items-center group mb-1 ${selectedPlaylistId === pl._id
+                  ? "bg-[var(--primary)] text-[var(--primary-text)] shadow-lg shadow-[var(--primary)]/20"
                   : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-main)]"
                   }`}
                 onClick={() => toggleSongs(pl._id)}
@@ -300,16 +302,19 @@ function Playlist() {
                       return (
                         <motion.div
                           key={song._id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.05 }}
-                          className={`group flex items-center gap-4 p-3 hover:bg-[var(--surface-hover)] rounded-lg transition-all border border-transparent ${isActive ? 'bg-[var(--surface-hover)] border-[var(--border)]' : ''}`}
+                          initial={{ opacity: 0, x: 10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          whileHover={{ x: 4, backgroundColor: 'var(--surface-hover)' }}
+                          transition={{ delay: index * 0.03 }}
+                          className={`group flex items-center gap-4 p-3 rounded-xl transition-all border border-transparent ${isActive ? 'bg-[var(--surface-hover)] border-[var(--border)] shadow-sm' : ''}`}
                         >
                           {/* Play/Buffering Cell */}
-                          <button
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={() => playSong(song)}
                             disabled={isCurrentBuffering}
-                            className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-[var(--surface-hover)] rounded-lg flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden border border-[var(--border)] relative"
+                            className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 bg-[var(--surface-hover)] rounded-xl flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors overflow-hidden border border-[var(--border)] relative"
                           >
                             {song.coverImage && (
                               <img src={song.coverImage} alt={song.title} className={`w-full h-full object-cover absolute inset-0 ${isCurrentPlaying ? "opacity-30" : "opacity-100"}`} />
@@ -327,7 +332,7 @@ function Playlist() {
                                 </svg>
                               )}
                             </div>
-                          </button>
+                          </motion.button>
 
                           <div className="flex-grow min-w-0">
                             <h4 className={`font-semibold text-sm truncate ${isActive ? 'text-[var(--primary)]' : 'text-[var(--text-main)]'}`}>{song.title}</h4>
