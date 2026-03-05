@@ -11,6 +11,7 @@ function Playlist() {
   const [songs, setSongs] = useState([]);
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user")));
   const [isCreating, setIsCreating] = useState(false);
 
@@ -43,6 +44,7 @@ function Playlist() {
       toast.success("Playlist created");
       setPlaylistName("");
       fetchPlaylists();
+      setShowCreateModal(false);
     } catch (err) {
       toast.error("Playlist creation failed");
     }
@@ -130,6 +132,71 @@ function Playlist() {
             </motion.div>
           </motion.div>
         )}
+
+        {showCreateModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4"
+            onClick={() => setShowCreateModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-[var(--surface)] border border-[var(--border)] p-6 rounded-2xl w-full max-w-sm shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-[var(--text-main)]">Create Playlist</h3>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="p-1 hover:bg-[var(--surface-hover)] rounded-full transition-colors text-[var(--text-muted)]"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2 block px-1">
+                    Playlist Name
+                  </label>
+                  <input
+                    autoFocus
+                    value={playlistName}
+                    onChange={(e) => setPlaylistName(e.target.value)}
+                    className="w-full px-4 py-3 bg-[var(--surface-hover)] border border-[var(--border)] rounded-xl outline-none text-[var(--text-main)] placeholder-zinc-500 focus:border-[var(--primary)] transition-all"
+                    placeholder="e.g. My Favorite Hits"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleCreatePlaylist();
+                      }
+                    }}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => setShowCreateModal(false)}
+                    className="px-4 py-3 bg-[var(--surface-hover)] text-[var(--text-main)] rounded-xl font-semibold flex-1 hover:opacity-80 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCreatePlaylist}
+                    className="px-4 py-3 bg-[var(--primary)] text-[var(--primary-text)] rounded-xl font-semibold flex-1 hover:opacity-90 transition shadow-lg shadow-[var(--primary)]/20"
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <div className="container-custom">
@@ -139,15 +206,8 @@ function Playlist() {
             <p className="text-[var(--text-muted)] text-sm mt-1">Manage your collections</p>
           </div>
           <button
-            onClick={() => {
-              if (isCreating && playlistName.trim()) {
-                handleCreatePlaylist();
-                setIsCreating(false);
-              } else {
-                setIsCreating(!isCreating);
-              }
-            }}
-            className="sm:hidden p-2 bg-[var(--surface-hover)] hover:bg-[var(--border)] rounded-full transition-colors"
+            onClick={() => setShowCreateModal(true)}
+            className="sm:hidden p-2 bg-[var(--surface-hover)] hover:bg-[var(--border)] rounded-full transition-colors text-[var(--text-main)]"
             aria-label="New Playlist"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,7 +216,7 @@ function Playlist() {
           </button>
         </div>
 
-        <div className={`${isCreating ? 'flex' : 'hidden'} sm:flex bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 shadow-sm max-w-md`}>
+        <div className="hidden sm:flex bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 shadow-sm max-w-md">
           <input
             value={playlistName}
             onChange={(e) => setPlaylistName(e.target.value)}
