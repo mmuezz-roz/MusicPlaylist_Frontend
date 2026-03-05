@@ -12,6 +12,7 @@ function Playlist() {
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [user] = useState(JSON.parse(localStorage.getItem("user")));
+  const [isCreating, setIsCreating] = useState(false);
 
   const { currentSong, isPlaying, isBuffering, playSong } = useAudio();
 
@@ -132,23 +133,45 @@ function Playlist() {
       </AnimatePresence>
 
       <div className="container-custom">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+        <div className="flex items-center justify-between mb-8 gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Library</h2>
             <p className="text-[var(--text-muted)] text-sm mt-1">Manage your collections</p>
           </div>
+          <button
+            onClick={() => {
+              if (isCreating && playlistName.trim()) {
+                handleCreatePlaylist();
+                setIsCreating(false);
+              } else {
+                setIsCreating(!isCreating);
+              }
+            }}
+            className="sm:hidden p-2 bg-[var(--surface-hover)] hover:bg-[var(--border)] rounded-full transition-colors"
+            aria-label="New Playlist"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
         </div>
 
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 flex shadow-sm max-w-md">
+        <div className={`${isCreating ? 'flex' : 'hidden'} sm:flex bg-[var(--surface)] border border-[var(--border)] p-1 rounded-xl mb-8 shadow-sm max-w-md`}>
           <input
             value={playlistName}
             onChange={(e) => setPlaylistName(e.target.value)}
             className="flex-grow px-4 py-2 bg-transparent outline-none text-[var(--text-main)] placeholder-zinc-400 text-sm"
             placeholder="New playlist name..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleCreatePlaylist();
+                setIsCreating(false);
+              }
+            }}
           />
           <button
             onClick={handleCreatePlaylist}
-            className="bg-[var(--primary)] text-[var(--primary-text)] px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
+            className="hidden sm:block bg-[var(--primary)] text-[var(--primary-text)] px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
           >
             Create
           </button>
